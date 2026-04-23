@@ -1,5 +1,7 @@
+import { sendwelcomeEmail } from "../emails/emailHandaler.js";
 import User from "../modules/user.models.js";
 import { generateToken } from "../utils/auth.utils.js";
+import "dotenv/config";
 
 export const register = async(req, res) => {
   try {
@@ -25,6 +27,16 @@ export const register = async(req, res) => {
         email: newUser.email,
         profilePicture: newUser.profilePicture,
       });
+
+      //send welcome email
+      try {
+        await sendwelcomeEmail(newUser.email, newUser.fullname, process.env.CLIENT_URL);
+      } catch (error) {
+        console.error("Error sending welcome email:", error);
+      }
+
+
+      
     } else {
       res.status(400).json({ message: "Invalid user data" });
     } 
