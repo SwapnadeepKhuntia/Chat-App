@@ -16,3 +16,5 @@ export const generateToken = (user,res) => {
   return token;
 }   
 
+
+
