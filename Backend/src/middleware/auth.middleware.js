@@ -1,10 +1,12 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
-import User from '../modules/user.models.js';
+import User from '../modules/user.module.js';
 
 export const verifyToken = async (req, res, next) => {
-    const token = req.cookies.jwt;
+    const token = req.cookies.jwt || req.headers.authorization?.split(" ")[1];
+    // console.log("veryfy",token);
+    
     if (!token) {
         return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
