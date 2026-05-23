@@ -1,5 +1,5 @@
 import { sendwelcomeEmail } from "../emails/emailHandaler.js";
-import User from "../modules/user.models.js";
+import User from "../modules/user.module.js";
 import { generateToken } from "../utils/auth.utils.js";
 import "dotenv/config";
 
@@ -28,12 +28,12 @@ export const register = async(req, res) => {
         profilePicture: newUser.profilePicture,
       });
 
-      //send welcome email
-      try {
-        await sendwelcomeEmail(newUser.email, newUser.fullname, process.env.CLIENT_URL);
-      } catch (error) {
-        console.error("Error sending welcome email:", error);
-      }
+      // //send welcome email
+      // try {
+      //   await sendwelcomeEmail(newUser.email, newUser.fullname, process.env.CLIENT_URL);
+      // } catch (error) {
+      //   console.error("Error sending welcome email:", error);
+      // }
 
 
       

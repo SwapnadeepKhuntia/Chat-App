@@ -3,6 +3,7 @@ import path from "path";
 import dotenv from "dotenv";
 import authRouter from "./routes/auth.router.js";
 import messageRouter from "./routes/message.router.js";
+import cookieParser from "cookie-parser";
 import connectDB from "./database/db.js";
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ const __dirname = path.resolve();
 
 app.use(express.json()); 
 
+app.use(cookieParser());
 
 app.use("/api/auth",authRouter);
 app.use("/api/messages",messageRouter);
@@ -28,6 +30,7 @@ if (process.env.NODE_ENV === "production") {
   } 
 ); 
 }
+
 
 app.listen(port, () => {
  
