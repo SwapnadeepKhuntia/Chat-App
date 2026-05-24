@@ -1,12 +1,12 @@
 import express from "express";
-import { getAllContacts, getMessagebyuserId, sendMessage} from "../controllers/message.controller.js";
+import { getAllContacts, getchatPartners, getMessagebyuserId, sendMessage} from "../controllers/message.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import { send } from "process";
 const router = express.Router();
 
 
 router.get("/contacts",verifyToken,getAllContacts);
-// router.get("/chats",getchatPartners);
+router.get("/chats",verifyToken,getchatPartners);
 
 router.get("/:id",verifyToken,getMessagebyuserId);
 
