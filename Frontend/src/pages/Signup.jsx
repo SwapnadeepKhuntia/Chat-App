@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { createAccount } from '../store/slices/AuthSlices.js'
 import BroderAnimated from '../components/BroderAnimated.jsx';
 import { LoaderIcon, LockIcon, MailIcon, MessageCircleIcon, UserIcon } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 function Signup() {
   const dispatch = useDispatch();
-  const {isLoading} = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const {data,isLoading} = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -16,13 +17,24 @@ function Signup() {
   // const handleChange = (e) => {
   //   setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   // }
+  console.log("data full",data);
+  console.log("isLoading",isLoading);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(formData);
-    dispatch(createAccount(formData));
+   let res = await dispatch(createAccount(formData));
+   console.log("response data",res);
+   if(res?.payload)
+    navigate("/");
+  // console.log("response",res);
   }
 
+  // const [formData, setFormData] = useState({
+  //   fullname: "",
+  //   email: "",
+  //   password: "",
+  // })
 
 
 
