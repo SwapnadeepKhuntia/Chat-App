@@ -1,5 +1,5 @@
 import express from "express";
-import { login, logout, register} from "../controllers/auth.controller.js";
+import { login, logout, register, updateProfilePicture} from "../controllers/auth.controller.js";
 import { arcjetProtection } from "../middleware/arcjet.middleware.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 
@@ -15,6 +15,7 @@ const router = express.Router();
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout",logout);
+router.post("/updateProfilePicture", verifyToken,updateProfilePicture)
 
 // add update profile route here
 // router.put("/update-profile", verifyToken,updateProfile);

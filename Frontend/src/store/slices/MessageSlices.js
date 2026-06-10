@@ -11,12 +11,15 @@ const initialState = {
    selectedUser: null,
    isUserLoading: false,
    isMessagesLoading: false,
-   isSoundEnabled: localStorage.getItem("isSoundEnabled") === "true" ? true : false,
+   isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === "true" ? true : false,
 }
 
 export const getAllContacts = createAsyncThunk("message/getAllContacts", async () => {
     try {
-        const response = axios.get("http://localhost:7000/api/message/contacts/");
+        const response = axios.get("http://localhost:7000/api/message/contacts/",{
+            withCredentials: true, // Include cookies in the request
+        });
+        console.log(response);
         toast.promise(response,{
             loading: "Loading contacts...",
             success:"Contacts loaded successfully",
@@ -30,7 +33,10 @@ export const getAllContacts = createAsyncThunk("message/getAllContacts", async (
 
 export const getMychatPartners = createAsyncThunk("message/getMychatPartners", async () => {
     try {
-        const response = axios.get("http://localhost:7000/api/message/chats/");
+        const response = axios.get("http://localhost:7000/api/message/chats/",{
+            withCredentials: true, // Include cookies in the request
+        });
+        // console.log(response);
         toast.promise(response,{
             loading: "Loading chats...",
             success:"Chats loaded successfully",
@@ -53,6 +59,7 @@ const messageSlice = createSlice({
         },
         setactiveTab: (state, action) => {
             state.activeTab = action.payload;
+            console.log(action.payload);
         },
         setSelectedUser: (state, action) => {
             state.selectedUser = action.payload;
@@ -80,7 +87,7 @@ const messageSlice = createSlice({
         .addCase(getMychatPartners.fulfilled, (state, action) => {
             state.isUserLoading = false;
             state.chats = action.payload;
-            console.log(action.payload);
+            // console.log(action.payload);
             
         })
         .addCase(getMychatPartners.rejected, (state) => {

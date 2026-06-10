@@ -27,7 +27,10 @@ export const createAccount = createAsyncThunk("auth/signup", async (data) => {
 
 export const loginAccount = createAsyncThunk("auth/login", async (data) => {
     try {
-        const response = axios.post("http://localhost:7000/api/auth/login/", data);
+        const response = axios.post("http://localhost:7000/api/auth/login/", data, {
+            withCredentials: true, // Include cookies in the request
+        });
+        console.log("response",response);
         toast.promise(response,{
             loading: "Logging in...",
             success:"Logged in successfully",
@@ -41,7 +44,9 @@ export const loginAccount = createAsyncThunk("auth/login", async (data) => {
 
 export const logoutAccount = createAsyncThunk("auth/logout", async () => {
     try {
-        const response = axios.post("http://localhost:7000/api/auth/logout/");
+        const response = axios.post("http://localhost:7000/api/auth/logout/",{},{
+            withCredentials: true, // Include cookies in the request
+        });
         console.log("logout response",response);
         toast.promise(response,{
             loading: "Logging out...",
@@ -51,6 +56,24 @@ export const logoutAccount = createAsyncThunk("auth/logout", async () => {
         return (await response).data;
     } catch (error) {
         throw error.response.data.message || "Failed to log out";
+    }
+});
+
+export const updateProfilePicture = createAsyncThunk("auth/updateProfilePicture", async (formData) => {
+    try {
+        const response = axios.post("http://localhost:7000/api/auth/updateProfilePicture/", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        }); 
+        toast.promise(response,{    
+            loading: "Updating profile picture...",
+            success:"Profile picture updated successfully",
+            error: "Failed to update profile picture"
+        });
+        return (await response).data;
+    } catch (error) {
+        throw error.response.data.message || "Failed to update profile picture";
     }
 });
 
@@ -80,6 +103,7 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.isLoggedIn = true;
             state.data = action.payload;
+            console.log("payload",action);
         })
         .addCase(loginAccount.rejected, (state) => {
             state.isLoading = false;

@@ -74,10 +74,38 @@ export const login = async(req, res) => {
 
 export const logout = async(req, res) => {
   try { 
-    res.cookie("jwt","",{maxAge:0});
+   res.cookie("jwt", "", {
+    maxAge: 0,
+    httpOnly: true,
+    sameSite: "lax",
+  });
     res.json({ message: "Logged out successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error logging out", error: error.message });
   }
 }
+
+export const updateProfilePicture = async(req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    const userId = req.user.id;
+    const profilePictureUrl = `${process.env.SERVER_URL}/uploads/${req.file.filename}`;
+    const user =  await User.findByIdAndUpdate(userId, { profilePicture: profilePictureUrl }, { new: true });
+    if (user) {
+      res.json({
+        id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        profilePicture: user.profilePicture,
+      });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error updating profile picture", error: error.message });
+  }
+}
+
 
