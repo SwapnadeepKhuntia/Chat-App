@@ -4,8 +4,8 @@ dotenv.config();
 import User from '../modules/user.module.js';
 
 export const verifyToken = async (req, res, next) => {
-    const token = req.cookies.jwt || req.headers.authorization?.split(" ")[1];
-    // console.log("veryfy",token);
+    const token = req.cookies.jwt;
+    // console.log("veryfy",req.cookies);
     
     if (!token) {
         return res.status(401).json({ message: "Unauthorized: No token provided" });
