@@ -17,8 +17,8 @@ function ChatList() {
 
   if(chats.length === 0) return <NoChatsFound/>;
 
-  console.log(chats);
-  console.log(selectedUser);
+  // console.log(chats);
+  // console.log(selectedUser);
   return (
     <>
     {chats.map((chat) => (
@@ -30,9 +30,9 @@ function ChatList() {
 
         <div className="flex items-center gap-3">
             {/* <div className={`avatar ${onlineUsers.includes(chat._id) ? "online" : "offline"}`}> */}
-              {/* <div className="size-12 rounded-full">
-                <img src={chat.profilePic || "/avatar.png"} alt={chat.fullName} />
-              </div> */}
+              <div className="size-12 rounded-full">
+                <img src={chat.profilePic || "/avatar.png"} alt={chat.fullname} />
+              </div>
             {/* </div> */}
             <h4 className="text-slate-200 font-medium truncate">{chat.fullname}</h4>
           </div>

@@ -20,11 +20,11 @@ export const getAllContacts = createAsyncThunk("message/getAllContacts", async (
             withCredentials: true, // Include cookies in the request
         });
         console.log(response);
-        toast.promise(response,{
-            loading: "Loading contacts...",
-            success:"Contacts loaded successfully",
-            error: "Failed to load contacts"
-        });
+        // toast.promise(response,{
+        //     loading: "Loading contacts...",
+        //     success:"Contacts loaded successfully",
+        //     error: "Failed to load contacts"
+        // });
         return (await response).data;
     } catch (error) {
         throw error.response.data.message || "Failed to load contacts";
@@ -37,11 +37,11 @@ export const getMychatPartners = createAsyncThunk("message/getMychatPartners", a
             withCredentials: true, // Include cookies in the request
         });
         // console.log(response);
-        toast.promise(response,{
-            loading: "Loading chats...",
-            success:"Chats loaded successfully",
-            error: "Failed to load chats"
-        });
+        // toast.promise(response,{
+        //     loading: "Loading chats...",
+        //     success:"Chats loaded successfully",
+        //     error: "Failed to load chats"
+        // });
         return (await response).data;
     } catch (error) {
         throw error.response.data.message || "Failed to load chats";
