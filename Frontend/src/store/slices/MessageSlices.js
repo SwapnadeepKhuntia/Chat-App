@@ -19,7 +19,6 @@ export const getAllContacts = createAsyncThunk("message/getAllContacts", async (
         const response = axios.get("http://localhost:7000/api/message/contacts/",{
             withCredentials: true, // Include cookies in the request
         });
-        console.log(response);
         // toast.promise(response,{
         //     loading: "Loading contacts...",
         //     success:"Contacts loaded successfully",
@@ -49,6 +48,42 @@ export const getMychatPartners = createAsyncThunk("message/getMychatPartners", a
 })
 
 
+export const getMessagebyuserId = createAsyncThunk("message/getMessagebyuserId", async (userId) => {
+    try {
+        console.log(userId);
+        
+        const response = axios.get(`http://localhost:7000/api/message/${userId}`,{
+            withCredentials: true, // Include cookies in the request
+        });
+           
+
+        return (await response).data;
+    } catch (error) {
+        throw error.response.data.message || "Failed to load messages";
+    }
+})
+
+export const sendMessage = createAsyncThunk("message/sendMessage", async ({receiverId, text}) => {
+    try {
+        const response = axios.post(`http://localhost:7000/api/message/${receiverId}`,{
+            content: text
+        },{
+            withCredentials: true, // Include cookies in the request
+        });
+        // console.log(response);
+        // toast.promise(response,{ 
+        //     loading: "Sending message...",
+        //     success:"Message sent successfully",
+
+        //     error: "Failed to send message"
+        // });
+        return (await response).data;
+    }
+        catch (error) {
+        throw error.response.data.message || "Failed to send message";
+    }
+})
+
 const messageSlice = createSlice({
     name: "message",
     initialState,
@@ -63,6 +98,7 @@ const messageSlice = createSlice({
         },
         setSelectedUser: (state, action) => {
             state.selectedUser = action.payload;
+            // console.log("state.selectedUser",state.selectedUser);
         },
         clearMessages: (state) => {
             state.messages = [];
@@ -92,6 +128,17 @@ const messageSlice = createSlice({
         })
         .addCase(getMychatPartners.rejected, (state) => {
             state.isUserLoading = false;
+        })
+
+         .addCase(getMessagebyuserId.pending,(state, action)=>{
+             state.isMessagesLoading = true;
+        })
+        
+        .addCase(getMessagebyuserId.fulfilled,(state, action)=>{
+            state.isMessagesLoading = false;
+            state.messages = action.payload;
+
+          
         })
 
     }
