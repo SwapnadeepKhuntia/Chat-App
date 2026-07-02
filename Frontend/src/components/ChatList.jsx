@@ -17,8 +17,8 @@ function ChatList() {
 
   if(chats.length === 0) return <NoChatsFound/>;
 
-  // console.log(chats);
-  // console.log(selectedUser);
+  console.log("chats",chats);
+  console.log("selecteduser",selectedUser);
   return (
     <>
     {chats.map((chat) => (

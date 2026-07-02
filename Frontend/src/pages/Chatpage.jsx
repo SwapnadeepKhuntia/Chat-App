@@ -8,7 +8,8 @@ import ActiveTabSwitch from '../components/ActiveTabSwitch';
 import ChatList from '../components/ChatList';
 import ContactList from '../components/ContactList';
 import ChatContainer from '../components/ChatContainer';
-import EmptyChat from '../components/EmptyChat';
+import NoConversationPlaceholder from '../components/NoConversationPlaceholder';
+
 // import {setactiveTab} from "../store/slices/MessageSlices";
 
 function Chatpage() {
@@ -18,6 +19,7 @@ function Chatpage() {
 
   const {activeTab,selectedUser} = useSelector((state) => state.message);
   
+
   
 
 
@@ -45,7 +47,7 @@ function Chatpage() {
 
           {/* {right side} */}
           <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm">
-               {selectedUser ? <ChatContainer/>: <EmptyChat/>}
+               {selectedUser ? <ChatContainer/>: <NoConversationPlaceholder/>}
           </div>
       </BroderAnimated>
     </div>
