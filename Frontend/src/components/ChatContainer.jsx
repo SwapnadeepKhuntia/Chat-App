@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { getMessagebyuserId } from '../store/slices/MessageSlices.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
@@ -8,40 +8,47 @@ import MessageInput from './MessageInput.jsx';
 import MessagesLoddingSkeletor from './MessagesLoddingSkeletor.jsx';
 
 function ChatContainer() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { selectedUser, messages,isMessagesLoading } = useSelector((state) => state.message);
 
   const { data } = useSelector((state) => state.auth);
 
-
+const messageEndRef = useRef(null)
 
   useEffect(() => {
     dispatch(getMessagebyuserId(selectedUser._id))
-  }, [selectedUser, getMessagebyuserId])
+  }, [selectedUser,getMessagebyuserId])
 
 
+  useEffect(()=>{
+    if(messageEndRef.current){
+      messageEndRef.current.scrollIntoView({behavior:"smooth"})
+    }
+  },[messages])
 
 
   return (
     <>
       <ChatHeader />
 
-      <div className="flex-1 px-6 overflow-y-auto py-8">
+      <div className="h-[400px] overflow-y-auto px-6 py-8">
         {
           messages.length > 0 && !isMessagesLoading ? (
             <div>
               {messages.map((message) => (
+                
+              
                 <div key = {message._id}
-                className={`chat ${message.senderId === data._id ? "chat-end" : "chat-start"}`}>
+                   className={`chat ${message.senderId === data.id ? "chat-end" : "chat-start"}`}>
                 
                 <div
-                  className={`chat-bubble-relative ${message.senderId === data._id ? "bg-cyan-600 text-white" : "bg-slate-700 text-slate-200"}`}>
-
+                  className={`chat-bubble relative ${message.senderId === data.id ? "bg-cyan-600 text-white" : "bg-slate-700 text-slate-200"}`}>
+{/* 
                     {
                       message.image && (
                         <img src={message.image} alt="Shared" className="w-48 h-48 object-cover rounded-lg mb-2" />
                       ) 
-                    }
+                    } */}
                 
                     {message.text && <p className='mt-2'>{message.text}</p>}
                     <p className = "text-xs mt-1 opacity-75 flex items-center gap-1">
@@ -53,6 +60,7 @@ function ChatContainer() {
                 </div>
               ))
               }
+              <div ref={messageEndRef}/>
             </div>
           ) : isMessagesLoading?<MessagesLoddingSkeletor/>: (
             <NoChathistoryplaceholder name={selectedUser.fullname} />
