@@ -1,22 +1,23 @@
-import {createSlice,createAsyncThunk} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 
 const initialState = {
-   allContacts: [],
-   messages: [],
-   chats: [],
-   activeTab: "chats",
-   selectedUser: null,
-   isUserLoading: false,
-   isMessagesLoading: false,
-   isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === "true" ? true : false,
+    allContacts: [],
+    messages: [],
+    chats: [],
+    activeTab: "chats",
+    selectedUser: null,
+    isUserLoading: false,
+    isMessagesLoading: false,
+    isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === "true" ? true : false,
 }
 
 export const getAllContacts = createAsyncThunk("message/getAllContacts", async () => {
     try {
-        const response = axios.get("http://localhost:7000/api/message/contacts/",{
+        const response = axios.get("http://localhost:7000/api/message/contacts/", {
             withCredentials: true, // Include cookies in the request
         });
         // toast.promise(response,{
@@ -27,12 +28,12 @@ export const getAllContacts = createAsyncThunk("message/getAllContacts", async (
         return (await response).data;
     } catch (error) {
         throw error.response.data.message || "Failed to load contacts";
-    }   
+    }
 })
 
 export const getMychatPartners = createAsyncThunk("message/getMychatPartners", async () => {
     try {
-        const response = axios.get("http://localhost:7000/api/message/chats/",{
+        const response = axios.get("http://localhost:7000/api/message/chats/", {
             withCredentials: true, // Include cookies in the request
         });
         // console.log(response);
@@ -51,11 +52,11 @@ export const getMychatPartners = createAsyncThunk("message/getMychatPartners", a
 export const getMessagebyuserId = createAsyncThunk("message/getMessagebyuserId", async (userId) => {
     try {
         console.log(userId);
-        
-        const response = axios.get(`http://localhost:7000/api/message/${userId}`,{
+
+        const response = axios.get(`http://localhost:7000/api/message/${userId}`, {
             withCredentials: true, // Include cookies in the request
         });
-           
+
 
         return (await response).data;
     } catch (error) {
@@ -63,23 +64,25 @@ export const getMessagebyuserId = createAsyncThunk("message/getMessagebyuserId",
     }
 })
 
-export const sendMessage = createAsyncThunk("message/sendMessage", async ({receiverId, text}) => {
+export const sendMessage = createAsyncThunk("message/sendMessage", async ({ receiverId, text }) => {
+
+
     try {
-        const response = axios.post(`http://localhost:7000/api/message/${receiverId}`,{
+        const response = axios.post(`http://localhost:7000/api/message/send/${receiverId}`, {
             content: text
-        },{
+        }, {
             withCredentials: true, // Include cookies in the request
         });
         // console.log(response);
-        // toast.promise(response,{ 
-        //     loading: "Sending message...",
-        //     success:"Message sent successfully",
+        toast.promise(response, {
+            // loading: "Sending message...",
+            // success:"Message sent successfully",
 
-        //     error: "Failed to send message"
-        // });
+            //error: "Failed to send message"
+        });
         return (await response).data;
     }
-        catch (error) {
+    catch (error) {
         throw error.response.data.message || "Failed to send message";
     }
 })
@@ -106,45 +109,63 @@ const messageSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-        .addCase(getAllContacts.pending, (state) => {
-            state.isUserLoading = true;
-        })
-        .addCase(getAllContacts.fulfilled, (state, action) => {
-            state.isUserLoading = false;
-            state.allContacts = action.payload;
-            console.log(action.payload);
-        })
-        .addCase(getAllContacts.rejected, (state) => {
-            state.isUserLoading = false;
-        })
-        .addCase(getMychatPartners.pending, (state) => {
-            state.isUserLoading = true;
-        })
-        .addCase(getMychatPartners.fulfilled, (state, action) => {
-            state.isUserLoading = false;
-            state.chats = action.payload;
-            // console.log(action.payload);
-            
-        })
-        .addCase(getMychatPartners.rejected, (state) => {
-            state.isUserLoading = false;
-        })
+            .addCase(getAllContacts.pending, (state) => {
+                state.isUserLoading = true;
+            })
+            .addCase(getAllContacts.fulfilled, (state, action) => {
+                state.isUserLoading = false;
+                state.allContacts = action.payload;
+                console.log(action.payload);
+            })
+            .addCase(getAllContacts.rejected, (state) => {
+                state.isUserLoading = false;
+            })
+            .addCase(getMychatPartners.pending, (state) => {
+                state.isUserLoading = true;
+            })
+            .addCase(getMychatPartners.fulfilled, (state, action) => {
+                state.isUserLoading = false;
+                state.chats = action.payload;
+                // console.log(action.payload);
 
-         .addCase(getMessagebyuserId.pending,(state, action)=>{
-             state.isMessagesLoading = true;
-        })
-        
-        .addCase(getMessagebyuserId.fulfilled,(state, action)=>{
-            state.isMessagesLoading = false;
-            state.messages = action.payload;
+            })
+            .addCase(getMychatPartners.rejected, (state) => {
+                state.isUserLoading = false;
+            })
 
-          
-        })
+            .addCase(getMessagebyuserId.pending, (state, action) => {
+                state.isMessagesLoading = true;
+            })
+
+            .addCase(getMessagebyuserId.fulfilled, (state, action) => {
+                state.isMessagesLoading = false;
+                state.messages = [...action.payload].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            })
+            .addCase(sendMessage.fulfilled, (state, action) => {
+                // const { data } = useSelector((state) => state.auth);
+                // const temId = `temp-${Date.now()}`;
+                // const optimisticeMessage = {
+                //     _id: temId,
+                //     senderId: data.id,
+                //     receiverId: receiverId,
+                //     text: text
+                // }
+                const newMessage = action.payload;
+                if (!newMessage) return;
+
+                // const exists = state.messages.some((message) => message._id === newMessage._id);
+                // if (!exists) {
+                    state.messages = [...state.messages, newMessage];
+                // }
+            })
+            .addCase(sendMessage.rejected, (state) => {
+                state.isMessagesLoading = false;
+            })
 
     }
 
 })
 
-export const {toggleSound, setactiveTab, setSelectedUser, clearMessages} = messageSlice.actions;
+export const { toggleSound, setactiveTab, setSelectedUser, clearMessages } = messageSlice.actions;
 
 export default messageSlice.reducer;
